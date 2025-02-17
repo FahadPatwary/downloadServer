@@ -6,9 +6,9 @@ import time
 from datetime import datetime
 from urllib.parse import unquote, urlparse
 
-import eventlet
+from gevent import monkey
 
-eventlet.monkey_patch()
+monkey.patch_all()
 
 import requests
 from flask import Flask, jsonify, request, send_file
@@ -28,7 +28,7 @@ CORS(app, resources={
 socketio = SocketIO(
     app,
     cors_allowed_origins="*",
-    async_mode='eventlet',
+    async_mode='gevent',
     ping_timeout=10,
     ping_interval=5
 )
