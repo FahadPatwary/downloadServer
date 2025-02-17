@@ -6,6 +6,10 @@ import time
 from datetime import datetime
 from urllib.parse import unquote, urlparse
 
+import eventlet
+
+eventlet.monkey_patch()
+
 import requests
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
@@ -19,7 +23,7 @@ CORS(app, resources={
         "allow_headers": ["Content-Type", "Authorization"]
     }
 })
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent')
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
 
 # Configure download directory
 DOWNLOAD_DIR = os.getenv('DOWNLOAD_DIR', '/tmp/downloads')
