@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "python -m pip install --upgrade pip && pip install -r requirements.txt"
+buildCommand = "python -m pip install --upgrade pip setuptools wheel && pip install -r requirements.txt"
 
 [deploy]
 startCommand = "gunicorn --worker-class gevent --workers 1 --bind 0.0.0.0:$PORT server:app"
@@ -10,4 +10,5 @@ restartPolicyType = "on_failure"
 
 [env]
 PYTHON_VERSION = "3.8.12"
-PYTHONUNBUFFERED = "1" 
+PYTHONUNBUFFERED = "1"
+NIXPACKS_PYTHON_VERSION = "3.8.12" 
