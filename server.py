@@ -23,7 +23,24 @@ CORS(app, resources={
         "allow_headers": ["Content-Type", "Authorization"]
     }
 })
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+
+# Configure SocketIO with ping timeout and interval
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode='eventlet',
+    ping_timeout=10,
+    ping_interval=5
+)
+
+# Health Check endpoint
+@app.route('/')
+@app.route('/health')
+def health_check():
+    return jsonify({
+        'status': 'healthy',
+        'timestamp': datetime.now().isoformat()
+    })
 
 # Configure download directory
 DOWNLOAD_DIR = os.getenv('DOWNLOAD_DIR', '/tmp/downloads')
@@ -218,5 +235,17 @@ def handle_disconnect():
     print('Client disconnected')
 
 if __name__ == '__main__':
+    # Create downloads directory
+    os.makedirs(DOWNLOAD_DIR, exist_ok=True)
+    
+    # Get port from environment
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port, debug=True) 
+    
+    # Run the server
+    socketio.run(
+        app,
+        host='0.0.0.0',
+        port=port,
+        debug=False,  # Set debug to False in production
+        use_reloader=False  # Disable reloader in production
+    ) 

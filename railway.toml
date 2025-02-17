@@ -3,11 +3,14 @@ builder = "nixpacks"
 buildCommand = "pip install --upgrade pip setuptools wheel && pip install -r requirements.txt"
 
 [deploy]
-startCommand = "gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT server:app"
-healthcheckPath = "/"
-healthcheckTimeout = 100
+startCommand = "gunicorn --worker-class eventlet -w 1 --bind 0.0.0.0:$PORT --timeout 120 --keep-alive 5 --log-level info server:app"
+healthcheckPath = "/health"
+healthcheckTimeout = 120
 restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5
 
 [env]
 PYTHON_VERSION = "3.8.16"
+PYTHONUNBUFFERED = "1"
+WEB_CONCURRENCY = "1"
 NIXPACKS_PYTHON_VERSION = "3.8.12" 
